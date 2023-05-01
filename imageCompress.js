@@ -28,9 +28,9 @@ function readFiles(dirname, onFileContent) {
 
 function compress(file) {
     // console.log(file)
-    const cmd = `convert -resize 25% /Users/sunil.chaudhary/Downloads/LFTP/Camera/r1/${file} /Users/sunil.chaudhary/Downloads/LFTP/Camera/r2/${file}`
+    const cmd = `convert -resize 50% /Users/sunil.chaudhary/Temporary/CompressImagesVideos/NehaBirthday5/${file} /Users/sunil.chaudhary/Temporary/CompressImagesVideos/r/${file}`
     console.log(cmd)
     exec(cmd)
 }
 
-readFiles(__dirname + '/../Camera/r1')
+readFiles(__dirname + '/NehaBirthday5')
