@@ -1,6 +1,8 @@
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 const fs = require('fs');
 let time = 0
+const entryDirectoryName = '/FromVideo';
+const outputDirectoryName = '/ToVideo';
 
 function readFiles(dirname, onFileContent) {
     fs.readdir(dirname, function (err, filenames) {
@@ -27,9 +29,14 @@ function readFiles(dirname, onFileContent) {
 }
 
 function compress(file) {
-    const cmd = `ffmpeg -i /Users/sunil.chaudhary/Downloads/LFTP/node/videos/${file} -vf "scale=iw/2:ih/2" /Users/sunil.chaudhary/Downloads/LFTP/node/c/${file}`
+    const input = `${__dirname}${entryDirectoryName}/${file}`
+    const output = `${__dirname}${outputDirectoryName}/${file}`
+    const cmd = `ffmpeg -i ${input} -vf "scale=iw/2:ih/2" ${output}`
     console.log(cmd)
-    exec(cmd)
+    const response = execSync(cmd)
+    const { atimeMs, mtimeMs, ctimeMs, birthtimeMs } = fs.statSync(input)
+    console.log({ atimeMs, mtimeMs, ctimeMs, birthtimeMs })
+    fs.utimesSync( output, new Date(birthtimeMs), new Date(birthtimeMs) )
 }
 
-readFiles(__dirname + '/videos')
+readFiles(__dirname + entryDirectoryName)
