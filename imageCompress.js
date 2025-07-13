@@ -1,6 +1,8 @@
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 const fs = require('fs');
 let time = 0
+const entryDirectoryName = '/FromImage';
+const outputDirectoryName = '/ToImage';
 
 function readFiles(dirname, onFileContent) {
     fs.readdir(dirname, function (err, filenames) {
@@ -9,12 +11,11 @@ function readFiles(dirname, onFileContent) {
             return;
         }
         filenames.forEach(function (filename) {
-            setTimeout(() => {
-                console.log("filename")
-                console.log(filename)
+            // setTimeout(() => {
+                console.log("filename: ", filename)
                 compress(filename)
-            }, time)
-            time = time + 250
+            // }, time)
+            // time = time + 250
             // fs.readFile(dirname + filename, 'utf-8', function (err, content) {
             //     if (err) {
             //         console.log('error b', err)
@@ -27,10 +28,16 @@ function readFiles(dirname, onFileContent) {
 }
 
 function compress(file) {
-    // console.log(file)
-    const cmd = `convert -resize 50% /Users/sunil.chaudhary/Temporary/CompressImagesVideos/NehaBirthday5/${file} /Users/sunil.chaudhary/Temporary/CompressImagesVideos/r/${file}`
-    console.log(cmd)
-    exec(cmd)
+    console.log('start', file)
+    const input = `${__dirname}${entryDirectoryName}/${file}`
+    const output = `${__dirname}${outputDirectoryName}/${file}`
+    const cmd = `magick convert -resize 25% ${input} ${output}`
+    const cmdResponse = execSync(cmd)
+    const { atimeMs, mtimeMs, ctimeMs, birthtimeMs } = fs.statSync(input)
+    console.log({ atimeMs, mtimeMs, ctimeMs, birthtimeMs })
+    fs.utimesSync( output, new Date(birthtimeMs), new Date(birthtimeMs) )
+    console.log('--end--')
+
 }
 
-readFiles(__dirname + '/NehaBirthday5')
+readFiles(__dirname + `${entryDirectoryName}`)
